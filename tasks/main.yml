@@ -1,2 +1,40 @@
 ---
 # tasks file for ignite-hadoop
+- name: get axel
+  apt:
+    name: axel
+    state: present
+
+# Tasks to install Apache Ignite Hadoop Accelerator 2.1.0
+- command: axel http://apache-mirror.rbc.ru/pub/apache//ignite/2.1.0/apache-ignite-hadoop-2.1.0-bin.zip
+  args:
+    chdir: /tmp
+  register: out
+
+# - debug: var=out.stdout_lines
+
+- template:
+    src: apache-ignite-hadoop-2.1.0-bin.zip.sha1.j2
+    dest: /tmp/apache-ignite-hadoop-2.1.0-bin.zip.sha1
+
+- name: ensure downloaded Ignite Hadoop Accelerator 2.1.0
+  shell: sha1sum -c apache-ignite-hadoop-2.1.0-bin.zip.sha1
+  args:
+    chdir: /tmp
+
+- set_fact: ignite_home="{{ ansible_env.IGNITE_HOME|default('/opt/ignite') }}"
+
+- name: install Ignite Hadoop Accelerator 2.1.0
+  unarchive:
+    src: /tmp/apache-ignite-hadoop-2.1.0-bin.zip
+    dest: "{{ ignite_home }}/libs"
+    remote_src: yes
+
+- name: configure Ignite file system
+  template:
+    src: default-config.xml.j2
+    dest: "{{ ignite_home }}/config/default-config.xml"
+  template:
+    src: core-site.xml.j2
+    dest: "{{ ansible_env.HADOOP_HOME }}/etc/hadoop"
+
