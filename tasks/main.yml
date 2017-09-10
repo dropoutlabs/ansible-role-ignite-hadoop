@@ -6,12 +6,12 @@
     state: present
 
 # Tasks to install Apache Ignite Hadoop Accelerator 2.1.0
-- command: axel http://apache-mirror.rbc.ru/pub/apache//ignite/2.1.0/apache-ignite-hadoop-2.1.0-bin.zip
+- command: axel --output=apache-ignite-hadoop-2.1.0-bin.zip "https://www.apache.org/dyn/mirrors/mirrors.cgi?action=download&filename=ignite/2.1.0/apache-ignite-hadoop-2.1.0-bin.zip"
   args:
     chdir: /tmp
   register: out
 
-# - debug: var=out.stdout_lines
+- debug: var=out.stdout_lines
 
 - template:
     src: apache-ignite-hadoop-2.1.0-bin.zip.sha1.j2
