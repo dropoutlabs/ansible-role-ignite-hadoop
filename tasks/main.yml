@@ -24,6 +24,10 @@
 
 - set_fact: ignite_home="{{ ansible_env.IGNITE_HOME|default('/opt/ignite') }}"
 
+- file:
+    path: "{{ ignite_home }}/libs"
+    state: directory
+
 - name: install Ignite Hadoop Accelerator 2.1.0
   unarchive:
     src: /tmp/apache-ignite-hadoop-2.1.0-bin.zip
