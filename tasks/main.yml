@@ -34,11 +34,24 @@
     dest: "{{ ignite_home }}/libs"
     remote_src: yes
 
+- name: XXX
+  slurp:
+    src: /etc/profile.d/hadoop.sh
+  register: hadoopsh
+
+- set_fact:
+    HADOOP_HOME: "{{ hadoopsh['content'] | 
+                     b64decode | 
+                     regex_search('export HADOOP_HOME=(.+)', '\\1') }}"
+
+- debug:
+    msg: "HADOOP_HOME is {{ HADOOP_HOME[0] }}"
+
 - name: configure Ignite file system
   template:
     src: default-config.xml.j2
     dest: "{{ ignite_home }}/config/default-config.xml"
   template:
     src: core-site.xml.j2
-    dest: "{{ ansible_env.HADOOP_HOME }}/etc/hadoop"
+    dest: "{{ HADOOP_HOME[0] }}/etc/hadoop"
 
